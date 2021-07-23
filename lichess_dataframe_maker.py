@@ -7,10 +7,23 @@ import numpy as np
 import json
 
 PLAYER_DATA_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_data_2021.json"
-PERFORMANCE_CATEGORIES = ("chess960", "puzzle", "racingKings", "ultraBullet", "blitz", "kingOfTheHill",
-                          "crazyhouse", "threeCheck", "bullet", "correspondence", "classical", "rapid")
-PERFORMANCE_SUB_CAT = ("games", "rating", "rd", "prog", "prov")
 EXPORT_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_dataframe.csv"
+
+PERFORMANCE_SUB_CAT = ("games", "rating", "rd", "prog", "prov")
+SPECIAL_SUB_CATEGORIES = ("runs", "score")
+RATING_FEATURE_DICT = {
+        "chess960": PERFORMANCE_SUB_CAT, "puzzle": PERFORMANCE_SUB_CAT, "racingKings": PERFORMANCE_SUB_CAT,
+        "ultraBullet": PERFORMANCE_SUB_CAT, "blitz": PERFORMANCE_SUB_CAT, "kingOfTheHill": PERFORMANCE_SUB_CAT,
+        "crazyhouse": PERFORMANCE_SUB_CAT, "threeCheck": PERFORMANCE_SUB_CAT, "bullet": PERFORMANCE_SUB_CAT,
+        "correspondence": PERFORMANCE_SUB_CAT, "classical": PERFORMANCE_SUB_CAT, "rapid": PERFORMANCE_SUB_CAT,
+        "storm": SPECIAL_SUB_CATEGORIES, "racer": SPECIAL_SUB_CATEGORIES, "streak": SPECIAL_SUB_CATEGORIES,
+}
+
+SPECIAL_DICT = {
+    "profile": ("country", "location", "fideRating"),
+    "playTime": ("total", "tv")
+}
+SINGLE_FEATURES = ("id", "patron", "language", "title", "nbFollowing", "nbFollowers", "completionRate")
 
 # does this work now?
 
@@ -18,7 +31,7 @@ def load_data(path):
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
-def create_json_dictionary(player_data, performance_cat, performance_sub_cat):
+def create_json_dictionary(player_data, single_features, rating_feature_dictionary, special_dictionary):
 
     player_dict = {}
 
@@ -28,49 +41,52 @@ def create_json_dictionary(player_data, performance_cat, performance_sub_cat):
         # Create player in dict
         player_dict[player_data["players"][i]["id"]] = []
 
-        # get the current player we are currently looking at
         current_player = player_data["players"][i]["id"]
 
-        #setting first value to ID for lookups
-        current_player = player_data["players"][i]["id"]
-        player_dict[current_player].append(current_player)
+        #add location and other data
+        for item in single_features:
+            try:
+                player_dict[current_player].append(player_data["players"][i][item])
+            except Exception as exception:
+                player_dict[current_player].append(np.nan)
 
-        # loop through each category and subcategory to get rating info
-        for j in range(len(performance_cat)):
-            for k in range(len(performance_sub_cat)):
+        #add rating stats
+        for variant in rating_feature_dictionary:
+            for value in rating_feature_dictionary[variant]:
                 try:
-                    player_dict[current_player].append(player_data["players"][i]["perfs"][performance_cat[j]][performance_sub_cat[k]])
-
-                # If the rating doesnt exist, or there is no info for that rating, we fill with nan
+                    player_dict[current_player].append(player_data["players"][i]["perfs"][variant][value])
                 except Exception as exception:
                     player_dict[current_player].append(np.nan)
 
-        # Now we add the special gamemodes, since they are structured differently
-        special_categories = ["storm", "racer", "streak"]
-        special_subcategories = ["runs", "score"]
-
-        for spec_cat in special_categories:
-            for spec_sub_cat in special_subcategories:
+        #add special gamemode stats
+        for key in special_dictionary:
+            for value in special_dictionary[key]:
                 try:
-                    player_dict[current_player].append(player_data["players"][i]["perfs"][spec_cat][spec_sub_cat])
+                    player_dict[current_player].append(player_data["players"][i][key][value])
                 except Exception as exception:
                     player_dict[current_player].append(np.nan)
 
     return player_dict
 
-def create_player_dataframe(player_dict, performance_cat, performance_sub_cat):
+def create_player_dataframe(player_dict, single_features, rating_feature_dictionary, special_dictionary):
 
-    special_categories = ["storm", "racer", "streak"]
-    special_subcategories = ["runs", "score"]
 
-    columns = ["id"]
-    for cat in performance_cat:
-        for sub_cat in performance_sub_cat:
-            columns.append(cat + "_" + sub_cat)
 
-    for spec_cat in special_categories:
-        for spec_sub_cat in special_subcategories:
-            columns.append(spec_cat + "_" + spec_sub_cat)
+    columns = []
+
+    # adding single features titles
+    for item in single_features:
+        columns.append(item)
+
+    # adding performance rating titles
+    for variant in rating_feature_dictionary:
+        for value in rating_feature_dictionary[variant]:
+            columns.append(variant + "_" + value)
+
+    # add special gamemode titles
+    for key in special_dictionary:
+        for value in special_dictionary[key]:
+            columns.append(key + "_" + value)
 
     player_df = pd.DataFrame.from_dict(player_dict, orient="index", columns=columns)
     return player_df
@@ -82,8 +98,8 @@ def export_dataframe(df, export_path):
 def main():
 
     player_data = load_data(PLAYER_DATA_PATH)
-    json_dict = create_json_dictionary(player_data, PERFORMANCE_CATEGORIES, PERFORMANCE_SUB_CAT)
-    player_df = create_player_dataframe(json_dict, PERFORMANCE_CATEGORIES, PERFORMANCE_SUB_CAT)
+    json_dict = create_json_dictionary(player_data, SINGLE_FEATURES, RATING_FEATURE_DICT, SPECIAL_DICT)
+    player_df = create_player_dataframe(json_dict, SINGLE_FEATURES, RATING_FEATURE_DICT, SPECIAL_DICT)
     export_dataframe(player_df, EXPORT_PATH)
 
 main()
