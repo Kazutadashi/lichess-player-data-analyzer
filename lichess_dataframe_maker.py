@@ -6,8 +6,8 @@ import pandas as pd
 import numpy as np
 import json
 
-PLAYER_DATA_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_data_2021.json"
-EXPORT_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_dataframe.csv"
+PLAYER_DATA_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_data_june_2021_0-50000.json"
+EXPORT_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_dataframe_june_2021_0-50000.csv"
 
 PERFORMANCE_SUB_CAT = ("games", "rating", "rd", "prog", "prov")
 SPECIAL_SUB_CATEGORIES = ("runs", "score")
