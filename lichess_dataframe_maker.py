@@ -12,6 +12,8 @@ PERFORMANCE_CATEGORIES = ("chess960", "puzzle", "racingKings", "ultraBullet", "b
 PERFORMANCE_SUB_CAT = ("games", "rating", "rd", "prog", "prov")
 EXPORT_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_dataframe.csv"
 
+# does this work now?
+
 def load_data(path):
     with open(path, encoding="utf-8") as f:
         return json.load(f)
