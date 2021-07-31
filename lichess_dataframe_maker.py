@@ -6,8 +6,12 @@ import pandas as pd
 import numpy as np
 import json
 
-PLAYER_DATA_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_data_june_2021_0-50000.json"
-EXPORT_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_dataframe_june_2021_0-50000.csv"
+PLAYER_DATA_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_data_june_2021_150000-200000.json"
+EXPORT_PATH = "C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_dataframe_june_2021_150000-200000.csv"
+CSV_FILE_NAMES = ['player_dataframe_june_2021_0-50000.csv',
+                          'player_dataframe_june_2021_50000-100000.csv',
+                          'player_dataframe_june_2021_100000-150000.csv',
+                          'player_dataframe_june_2021_150000-200000.csv']
 
 PERFORMANCE_SUB_CAT = ("games", "rating", "rd", "prog", "prov")
 SPECIAL_SUB_CATEGORIES = ("runs", "score")
@@ -94,12 +98,17 @@ def create_player_dataframe(player_dict, single_features, rating_feature_diction
 def export_dataframe(df, export_path):
     df.to_csv(path_or_buf=export_path, index=False)
 
+def join_csv_files(csv_filenames, output_path):
+    joint_df = pd.concat(
+        map(pd.read_csv, csv_filenames), ignore_index=True)
+    joint_df.to_csv(path_or_buf=output_path)
 
 def main():
 
-    player_data = load_data(PLAYER_DATA_PATH)
-    json_dict = create_json_dictionary(player_data, SINGLE_FEATURES, RATING_FEATURE_DICT, SPECIAL_DICT)
-    player_df = create_player_dataframe(json_dict, SINGLE_FEATURES, RATING_FEATURE_DICT, SPECIAL_DICT)
-    export_dataframe(player_df, EXPORT_PATH)
+    # player_data = load_data(PLAYER_DATA_PATH)
+    # json_dict = create_json_dictionary(player_data, SINGLE_FEATURES, RATING_FEATURE_DICT, SPECIAL_DICT)
+    # player_df = create_player_dataframe(json_dict, SINGLE_FEATURES, RATING_FEATURE_DICT, SPECIAL_DICT)
+    # export_dataframe(player_df, EXPORT_PATH)
+    join_csv_files(CSV_FILE_NAMES, 'july_data.csv')
 
 main()

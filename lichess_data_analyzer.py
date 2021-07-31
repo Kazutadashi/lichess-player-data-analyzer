@@ -2,6 +2,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import scipy.stats as scs
+import plotly.figure_factory as ff
 
 def fix_stats(df):
     # setting the default rating of 1500 to nan if the user has no games played for these modes
@@ -26,7 +28,29 @@ def plot_stats(df, bins=10, plot_type=1):
     else:
         print("something went wrong")
 
-player_df = pd.read_csv("C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/player_dataframe_june_2021_0-50000.csv")
+def get_percentile(series, player_rating):
+    # gets the player's percentile for the given mode
+
+    # we remove NaN values, add the players rating, and sort the list.
+    cleaned_series = series.dropna()
+    cleaned_series = cleaned_series.append(pd.Series([player_rating]))
+    cleaned_series = cleaned_series.sort_values()
+
+    print("With a score of {}, You are better than {}% of players in the category {}.".format(
+        player_rating,
+        round(scs.percentileofscore(cleaned_series, player_rating, kind='weak'), 4),
+        series.name))
+
+    return scs.percentileofscore(cleaned_series, player_rating, kind='weak')
+
+def plot_cdf_pdf(df, mode):
+    cleaned_series = df[mode].dropna()
+
+    fig = ff.create_distplot([cleaned_series.tolist()], [df[mode].name], show_hist=False, show_rug=False)
+    fig.show()
+
+
+player_df = pd.read_csv("C:/Users/Kazutadashi/Dropbox/Programming Projects/Lichess/july_data.csv")
 
 fix_stats(player_df)
 
@@ -34,4 +58,15 @@ titled_players_df = player_df.loc[player_df['title'].notnull()]
 titled_players_df = titled_players_df.loc[player_df['title'] != "BOT"]
 
 low_title_df = titled_players_df.loc[(titled_players_df['title'] == "CM") | (titled_players_df['title'] == "FM") | (titled_players_df['title'] == "NM")]
-print(low_title_df.puzzle_rating.describe())
+# print(low_title_df.puzzle_rating.describe())
+# print(player_df.puzzle_rating.describe())
+
+get_percentile(player_df.puzzle_rating, 2450)
+get_percentile(player_df.rapid_rating, 2232)
+get_percentile(player_df.blitz_rating, 1882)
+get_percentile(player_df.storm_score, 44)
+
+plot_cdf_pdf(player_df, 'rapid_rating')
+
+
+
