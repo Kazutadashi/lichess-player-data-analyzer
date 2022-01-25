@@ -9,7 +9,7 @@ import time
 
 
 PLAYER_LIST_PATH = "player_list_june_2021.csv"
-OUTPUT_FILENAME = "player_data_june_2021_150000-200000.json"
+OUTPUT_FILENAME = "player_data_june_2021_200000-300000.json"
 
 # opens csv file to load in players
 with open(PLAYER_LIST_PATH, newline='') as f:
@@ -22,7 +22,7 @@ with open(OUTPUT_FILENAME, "w") as player_data_json:
 
 # Gets json data for each player, in this specific [0][0:1000] we just want 1000 players to test
 # uses tqdm for a progress bar
-for player in tqdm.tqdm(players[0][150000:200000]):
+for player in tqdm.tqdm(players[0][200000:300000]):
     try:
         #print("Fetching JSON data for " + player + "...")
         with urllib.request.urlopen("https://lichess.org/api/user/" + player) as url:
