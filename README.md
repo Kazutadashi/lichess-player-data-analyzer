@@ -12,4 +12,7 @@ lichess_data_cleaner.py    - This file takes in a large PGN (chess game) file, a
 json_maker.py              - This file is responsible for making a single JSON file for all players so that it can easily be used later for analysis 
                              or CSV conversion.
 lichess_data_analyzer.py   - This file is used to run different analyses on the player data to obtain useful information.
-                          
+
+# Example of analysis
+This is a simple linear regression to determine the R^2 value between the relationship of Puzzle Ratings on Lichess, and the players Blitz Rating.
+![Figure_1](https://user-images.githubusercontent.com/40162378/189042518-c5f6e861-8e1b-4739-bc29-1e2502e72e66.png)
