@@ -69,5 +69,19 @@ get_percentile(player_df.blitz_rating, 2200)
 get_percentile(player_df.storm_score, 53)
 get_percentile(player_df.streak_score, 55)
 
+regression_df = player_df[player_df['puzzle_rating'].notna() & player_df['blitz_rating'].notna()]
+
+print(regression_df)
+
+res = scs.linregress(regression_df.puzzle_rating, regression_df.blitz_rating)
+print(res)
+
+print("plotting..")
+plt.plot(regression_df.puzzle_rating, regression_df.blitz_rating, 'o', label='original data')
+plt.xlabel("Puzzle Rating")
+plt.ylabel("Blitz Rating")
+plt.plot(regression_df.puzzle_rating, res.intercept + res.slope*regression_df.puzzle_rating, 'r', label='fitted line')
+plt.annotate(f"R-squared: {res.rvalue**2:.6f}", xy=(600, 3000))
+plt.show()
 
 
