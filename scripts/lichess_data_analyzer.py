@@ -52,36 +52,6 @@ def plot_cdf_pdf(df, mode):
     fig.show()
 
 
-player_df = pd.read_csv("data\july_data.csv")
 
-fix_stats(player_df)
-
-titled_players_df = player_df.loc[player_df['title'].notnull()]
-titled_players_df = titled_players_df.loc[player_df['title'] != "BOT"]
-
-low_title_df = titled_players_df.loc[(titled_players_df['title'] == "CM") | (titled_players_df['title'] == "FM") | (titled_players_df['title'] == "NM")]
-print(low_title_df.puzzle_rating.describe())
-print(player_df.puzzle_rating.describe())
-
-get_percentile(player_df.puzzle_rating, 2320)
-get_percentile(player_df.rapid_rating, 2150)
-get_percentile(player_df.blitz_rating, 2200)
-get_percentile(player_df.storm_score, 53)
-get_percentile(player_df.streak_score, 55)
-
-regression_df = player_df[player_df['puzzle_rating'].notna() & player_df['blitz_rating'].notna()]
-
-print(regression_df)
-
-res = scs.linregress(regression_df.puzzle_rating, regression_df.blitz_rating)
-print(res)
-
-print("plotting..")
-plt.plot(regression_df.puzzle_rating, regression_df.blitz_rating, 'o', label='original data')
-plt.xlabel("Puzzle Rating")
-plt.ylabel("Blitz Rating")
-plt.plot(regression_df.puzzle_rating, res.intercept + res.slope*regression_df.puzzle_rating, 'r', label='fitted line')
-plt.annotate(f"R-squared: {res.rvalue**2:.6f}", xy=(600, 3000))
-plt.show()
 
 
