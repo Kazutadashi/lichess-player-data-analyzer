@@ -1,5 +1,6 @@
 # lichess-player-data-analyzer
-Tools for gathering player rating data and data analysis for Lichess users
+Tools for gathering player rating data and data analysis for Lichess users. Please see the notebook for clear examples and usage
+https://github.com/Kazutadashi/lichess-player-data-analyzer/blob/master/present.ipynb
 
 This is a project that focuses on collecting data from Lichess' API, cleaning it, converting into CSV/JSON formats, and analyzing the cleaned data. 
 The cleaned data consists of various ratings and stats for 300,000 players on Lichess. 
