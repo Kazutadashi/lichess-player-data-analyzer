@@ -52,7 +52,7 @@ def plot_cdf_pdf(df, mode):
     fig.show()
 
 
-player_df = pd.read_csv("C:/Users/Kazutadashi/Dropbox/Computer and Data Science/Python/Lichess/july_data.csv")
+player_df = pd.read_csv("data\july_data.csv")
 
 fix_stats(player_df)
 
